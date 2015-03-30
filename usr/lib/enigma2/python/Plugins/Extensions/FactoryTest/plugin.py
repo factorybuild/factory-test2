@@ -53,7 +53,7 @@ lnb_choices = {'universal_lnb': _('Universal LNB'),
  'c_band': _('C-Band'),
  'user_defined': _('User defined')}
 models = ['g300', 'et10000', 'et8000', 'et9x00', 'et7500', 'et7000', 'et8500']
-JIG_VERSION = '3.9'
+JIG_VERSION = '1.0'
 
 class cFactoryTestPlugin(Screen):
     TEST_NONE = 0
@@ -76,13 +76,13 @@ class cFactoryTestPlugin(Screen):
                 os._exit(1)
         else:
             os._exit(1)
-        if self.boxtype == 'et10000' or self.boxtype == 'et8000' or self.boxtype == 'g300':
+        if self.boxtype == 'et10000' or self.boxtype == 'et8000':
             if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/FactoryTest/factoryhelper.so'):
                 self.dll = cdll.LoadLibrary('/usr/lib/enigma2/python/Plugins/Extensions/FactoryTest/factoryhelper.so')
             else:
                 os._exit(1)
         if os.path.exists('/proc/stb/info/board_revision'):
-            if self.boxtype == 'et9x00' or self.boxtype == 'et7500' or self.boxtype == 'et7000' or self.boxtype == 'et8500':
+            if self.boxtype == 'et9x00' or self.boxtype == 'et7500' or self.boxtype == 'et7000' or self.boxtype == 'et8500' or self.boxtype == 'g300':
                 self.hardwareversion = self.readFile('/proc/stb/info/board_revision')
             else:
                 self.hardwareversion = '0.' + self.readFile('/proc/stb/info/board_revision')
@@ -131,7 +131,34 @@ class cFactoryTestPlugin(Screen):
              'ok': 3}
             self.has_esata = True
             self.has_security = True
-        elif self.boxtype == 'et8000' or self.boxtype == 'g300':
+        elif self.boxtype == 'g300':
+            self.tuners = [['Unknown', 'Unknown'], ['Unknown', 'Unknown'], ['Unknown', 'Unknown']]
+            self.usbslot_names = ['Back Low', 'Back High', 'Front']
+            self.usbslot_target = ['1-', '2-', '3-']
+            self.menu_names = ['Tuner 1',
+             'Tuner 2',
+             'Tuner 3',
+             'HDD Test',
+             'RCA Test',
+             'RCU Key Test',
+             'Front LED Test',
+             'Aging Test',
+             'Factory Default']
+            self.menu_tuner_index = range(0, 3)
+            self.button_count = 8
+            self.buttons = {'menu': 6,
+             'cancel': 7,
+             'power': 0,
+             'volup': 2,
+             'voldown': 1,
+             'left': 3,
+             'right': 4,
+             'up': 5,
+             'down': 4,
+             'ok': 3}
+            self.has_esata = False
+            self.has_security = False
+        elif self.boxtype == 'et8000':
             self.tuners = [['Unknown', 'Unknown'], ['Unknown', 'Unknown'], ['Unknown', 'Unknown']]
             self.usbslot_names = ['Back Low', 'Back High', 'Front']
             self.usbslot_target = ['1-', '2-', '3-']
@@ -291,7 +318,7 @@ class cFactoryTestPlugin(Screen):
             self.usbslot.append(False)
             self.last_message_size.append(0)
 
-        self.skin = '<screen position="0,0" size="e-0,e-0" title="XTrend Model JIG" flags="wfNoBorder" backgroundColor="transparent">'
+        self.skin = '<screen position="0,0" size="e-0,e-0" title="Factory Test" flags="wfNoBorder" backgroundColor="transparent">'
         leftindex = 0
         voffset = 40
         self.total_left = len(self.menu_names)
@@ -483,7 +510,7 @@ class cFactoryTestPlugin(Screen):
         self['stbname'].setText(' %s - %s' % (self.boxtype.upper(), self.location.upper()))
         self['buttons_red'].setText('Location Of Test')
         self['buttons_yellow'].setText('Aging Test')
-        self['version'].setText('JIG Version: ' + JIG_VERSION)
+        self['version'].setText('Test Version: ' + JIG_VERSION)
         self.tuner_count = len(nimmanager.nim_slots)
         for x in range(len(self.tuners)):
             if x < self.tuner_count:
@@ -760,7 +787,7 @@ class cFactoryTestPlugin(Screen):
                             self.setRightMenuEthernet(1, True)
 
     def runSmartcardTest(self, slot):
-        if self.boxtype == 'et10000' or self.boxtype == 'et8000' or self.boxtype == 'g300':
+        if self.boxtype == 'et10000' or self.boxtype == 'et8000':
             self.fd = self.dll.opensci('/dev/sci%d' % slot)
             status = self.dll.getscistatus(self.fd)
             if status == 1:
@@ -776,7 +803,7 @@ class cFactoryTestPlugin(Screen):
                             self.setRightMenuSmartcard(slot, True)
 
             self.dll.closesci(self.fd)
-        elif self.boxtype == 'et9x00' or self.boxtype == 'et7000' or self.boxtype == 'et7500' or self.boxtype == 'et8500':
+        elif self.boxtype == 'et9x00' or self.boxtype == 'et7000' or self.boxtype == 'et7500' or self.boxtype == 'et8500' or self.boxtype == 'g300':
             p = os.popen('/usr/lib/enigma2/python/Plugins/Extensions/FactoryTest/sctest /dev/sci%d' % slot)
             ret = p.read()
             if ret.strip() == '1':
@@ -1224,7 +1251,7 @@ class cFactoryTestPlugin(Screen):
             self.want_ok = False
             self.type_test = self.TEST_NONE
             eAVSwitch.getInstance().setInput(0)
-            self.setTitle('XTrend Model JIG')
+            self.setTitle('Factoty Test')
             self.ledtest = False
             if self.runAgingTestKeyActionProtect is False:
                 self.keyDown()
@@ -1710,12 +1737,18 @@ class cFactoryTestPlugin(Screen):
             else:
                 self['menuright' + str(idx)].setText(' ESATA - OK')
         else:
-            self['menuright' + str(idx)].setForegroundColorNum(0)
-            self['menuright' + str(idx)].setBackgroundColorNum(0)
+            try:
+                self['menuright' + str(idx)].setForegroundColorNum(0)
+                self['menuright' + str(idx)].setBackgroundColorNum(0)
+            except:
+                pass
             if self.boxtype == 'et7500' or self.boxtype == 'et8500':
                 self['menuright' + str(idx)].setText(' INT./EXT. ESATA')
             else:
-                self['menuright' + str(idx)].setText(' ESATA')
+                try:
+                    self['menuright' + str(idx)].setText(' ESATA')
+                except:
+                    pass
 
     def setButton(self, val):
         if val >= 0:
@@ -2213,7 +2246,7 @@ class cFactoryTestPlugin(Screen):
         f.close()
 
     def doRemoveFactoryTest(self):
-        if self.boxtype == 'et8000' or self.boxtype == 'et10000' or self.boxtype == 'g300':
+        if self.boxtype == 'et8000' or self.boxtype == 'et10000':
             os.system('rm -fR /etc/enigma2/lamedb')
             os.system('cp /etc/enigma2/lamedb_org /etc/enigma2/lamedb')
             os.system('rm -fR /etc/enigma2/userbouquet.LastScanned.tv')
@@ -2234,7 +2267,7 @@ class cFactoryTestPlugin(Screen):
                 self.fanControl('off')
         if self.has_eth1 is True:
             os.system('ifdown eth1')
-        os.system('opkg remove enigma2-plugin-extensions-xtrend-jig* --autoremove')
+        os.system('opkg remove enigma2-plugin-extensions-factory --autoremove')
         os._exit(0)
 
 
