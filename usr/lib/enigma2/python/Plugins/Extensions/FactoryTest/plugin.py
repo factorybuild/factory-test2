@@ -63,9 +63,10 @@ class cFactoryTestPlugin(Screen):
     TEST_TUNER = 4
     TEST_REMOVE = 5
     TEST_ESATA = 6
-    TEST_SCART = 7
-    TEST_HDD = 8
-    TEST_FRONT_LED = 9
+    TEST_SATA = 7
+    TEST_SCART = 8
+    TEST_HDD = 9
+    TEST_FRONT_LED = 10
     locations = []
     recordTestFileName = '/media/hdd/record_test.ts'
 
@@ -138,10 +139,9 @@ class cFactoryTestPlugin(Screen):
             self.menu_names = ['Tuner 1',
              'Tuner 2',
              'Tuner 3',
-             'HDD Test',
              'RCA Test',
-             'RCU Key Test',
-             'Front LED Test',
+             'FRONT KEY TEST',
+             'FRONT VFD TEST',
              'Aging Test',
              'Factory Default']
             self.menu_tuner_index = range(0, 3)
@@ -156,7 +156,8 @@ class cFactoryTestPlugin(Screen):
              'up': 5,
              'down': 4,
              'ok': 3}
-            self.has_esata = False
+            self.has_sata = True
+            self.has_esata = True
             self.has_security = False
         elif self.boxtype == 'et8000':
             self.tuners = [['Unknown', 'Unknown'], ['Unknown', 'Unknown'], ['Unknown', 'Unknown']]
@@ -333,6 +334,8 @@ class cFactoryTestPlugin(Screen):
             self.total_right = self.total_right + 1
         if self.has_esata is True:
             self.total_right = self.total_right + 1
+        if self.has_sata is True:
+            self.total_right = self.total_right + 1
         if self.has_security is True:
             self.total_right = self.total_right + 1
         self.last_esata_message_size = 0
@@ -476,6 +479,8 @@ class cFactoryTestPlugin(Screen):
             self.setRightMenuCi(1, False)
         if self.has_esata is True:
             self.setRightMenuEsata(0)
+        if self.has_sata is True:
+            self.setRightMenusata(0)
         for x in range(self.button_count):
             self['button' + str(x)] = MultiColorLabel()
             self['button' + str(x)].setForegroundColorNum(0)
@@ -832,12 +837,35 @@ class cFactoryTestPlugin(Screen):
         ret = self.readEsatalog()
         if ret != '':
             for x in ret:
-                if 'SATA link up' in x:
-                    self.setRightMenuEsata(True)
-                    break
-                if 'SATA link down' in x:
-                    self.setRightMenuEsata(False)
-                    break
+                if self.boxtype == 'g300':
+                    if 'ata2: SATA link up' in x:
+                        self.setRightMenuEsata(True)
+                        break
+                    if 'ata2: SATA link down' in x:
+                        self.setRightMenuEsata(False)
+                        break
+                else:
+                    if 'SATA link up' in x:
+                        self.setRightMenuEsata(True)
+                        break
+                    if 'SATA link down' in x:
+                        self.setRightMenuEsata(False)
+                        break
+                if self.boxtype == 'g300':
+                    if 'ata1: SATA link up' in x:
+                        self.setRightMenusata(True)
+                        break
+                    if 'ata1: SATA link down' in x:
+                        self.setRightMenusata(False)
+                        break
+                else:
+                    if 'SATA link up' in x:
+                        self.setRightMenusata(True)
+                        break
+                    if 'SATA link down' in x:
+                        self.setRightMenusata(False)
+                        break
+
 
     def runAgingTest(self, val):
         if val == 1:
@@ -1236,8 +1264,12 @@ class cFactoryTestPlugin(Screen):
 
     def runFrontLEDTest(self, val):
         if val == 1:
+            if fileExists("/proc/stb/lcd/symbol_all"):
+                f = open("/proc/stb/lcd/symbol_all", "w")
+                f.write("1")
+                f.close()
             self.showMessage()
-            self['message'].setText('Front LED Test running\n\nWhile testing, the screen is off\nAfter screen off, press OK or Directrion key (UP/DOWN) to test stop, then the screen is on\n\nPress OK to continue test\nPress Direction Key(UP/DOWN) to stop')
+            self['message'].setText('Front Display Test running\n\nWhile testing, the screen is off\nAfter screen off, press OK or Directrion key (UP/DOWN) to test stop, then the screen is on\n\nPress OK to continue test\nPress Direction Key(UP/DOWN) to stop')
             self.type_test = self.TEST_FRONT_LED
             self.want_ok = True
             if self.ledtest:
@@ -1247,6 +1279,10 @@ class cFactoryTestPlugin(Screen):
             else:
                 self.ledtest = True
         else:
+            if fileExists("/proc/stb/lcd/symbol_all"):
+                f = open("/proc/stb/lcd/symbol_all", "w")
+                f.write("0")
+                f.close()
             self.hideMessage()
             self.want_ok = False
             self.type_test = self.TEST_NONE
@@ -1750,6 +1786,29 @@ class cFactoryTestPlugin(Screen):
                 except:
                     pass
 
+    def setRightMenusata(self, val):
+        idx = self.usbslots + self.scislots + self.cislots + 1
+        if self.has_security is True:
+            idx = idx + 1
+        if self.has_eth1 is True:
+            idx = idx + 1
+        if self.has_esata is True:
+            idx = idx + 1
+        if val is True:
+            self['menuright' + str(idx)].setForegroundColorNum(1)
+            self['menuright' + str(idx)].setBackgroundColorNum(1)
+            self['menuright' + str(idx)].setText(' SATA - OK')
+        else:
+            try:
+                self['menuright' + str(idx)].setForegroundColorNum(0)
+                self['menuright' + str(idx)].setBackgroundColorNum(0)
+            except:
+                pass
+            try:
+                self['menuright' + str(idx)].setText(' SATA')
+            except:
+                pass
+
     def setButton(self, val):
         if val >= 0:
             self['button' + str(val)].setForegroundColorNum(1)
@@ -1885,7 +1944,7 @@ class cFactoryTestPlugin(Screen):
                 self.runAgingTest(1)
             elif self.leftmenu_idx == tuner_count + 6:
                 self.runRemovePlugin()
-        elif self.boxtype == 'et8000' or self.boxtype == 'g300':
+        elif self.boxtype == 'et8000':
             if self.leftmenu_idx in self.menu_tuner_index:
                 self.runTunerTest(1)
             elif self.leftmenu_idx == tuner_count:
@@ -1900,6 +1959,20 @@ class cFactoryTestPlugin(Screen):
             elif self.leftmenu_idx == tuner_count + 4:
                 self.runAgingTest(1)
             elif self.leftmenu_idx == tuner_count + 5:
+                self.runRemovePlugin()
+        elif self.boxtype == 'g300':
+            if self.leftmenu_idx in self.menu_tuner_index:
+                self.runTunerTest(1)
+            elif self.leftmenu_idx == tuner_count:
+                self.runScartTest(1)
+            elif self.leftmenu_idx == tuner_count + 1:
+                self.runKeyTest(1)
+                self.runKeyTestStart = True
+            elif self.leftmenu_idx == tuner_count + 2:
+                self.runFrontLEDTest(1)
+            elif self.leftmenu_idx == tuner_count + 3:
+                self.runAgingTest(1)
+            elif self.leftmenu_idx == tuner_count + 4:
                 self.runRemovePlugin()
         elif self.boxtype == 'et9x00':
             if self.leftmenu_idx in self.menu_tuner_index:

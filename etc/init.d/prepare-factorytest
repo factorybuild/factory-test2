@@ -22,6 +22,7 @@ if [ -f $PLUGIN_FILE_PY -o -f $PLUGIN_FILE_PYO ]; then
 	echo 'config.av.videoport=DVI' >> $CONFIG_FILE
 	echo 'config.audio.volume=100' >> $CONFIG_FILE
 	echo 'config.plugins.FanSetup.mode=on' >> $CONFIG_FILE
+	echo 'config.usage.hide_ci_messages=true' >> $CONFIG_FILE
 fi
 
 if [ -f $SATELLITE_LIST ]; then
