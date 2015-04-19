@@ -139,23 +139,22 @@ class cFactoryTestPlugin(Screen):
             self.menu_names = ['Tuner 1',
              'Tuner 2',
              'Tuner 3',
-             'RCA Test',
              'FRONT KEY TEST',
              'FRONT VFD TEST',
              'Aging Test',
              'Factory Default']
             self.menu_tuner_index = range(0, 3)
-            self.button_count = 8
+            self.button_count = 1
             self.buttons = {'menu': 6,
-             'cancel': 7,
+             'cancel': -1,
              'power': 0,
-             'volup': 2,
-             'voldown': 1,
-             'left': 3,
-             'right': 4,
-             'up': 5,
-             'down': 4,
-             'ok': 3}
+             'volup': -1,
+             'voldown': -1,
+             'left': -1,
+             'right': -1,
+             'up': -1,
+             'down': -1,
+             'ok': -1}
             self.has_sata = True
             self.has_esata = True
             self.has_security = False
@@ -1964,15 +1963,13 @@ class cFactoryTestPlugin(Screen):
             if self.leftmenu_idx in self.menu_tuner_index:
                 self.runTunerTest(1)
             elif self.leftmenu_idx == tuner_count:
-                self.runScartTest(1)
-            elif self.leftmenu_idx == tuner_count + 1:
                 self.runKeyTest(1)
                 self.runKeyTestStart = True
-            elif self.leftmenu_idx == tuner_count + 2:
+            elif self.leftmenu_idx == tuner_count + 1:
                 self.runFrontLEDTest(1)
-            elif self.leftmenu_idx == tuner_count + 3:
+            elif self.leftmenu_idx == tuner_count + 2:
                 self.runAgingTest(1)
-            elif self.leftmenu_idx == tuner_count + 4:
+            elif self.leftmenu_idx == tuner_count + 3:
                 self.runRemovePlugin()
         elif self.boxtype == 'et9x00':
             if self.leftmenu_idx in self.menu_tuner_index:
