@@ -3,7 +3,7 @@
     <satellite>
         <transponder>
             <location>china</location>
-            <description>ChinaSat 6B(115.5E) CCTV1 </description>
+            <description>ChinaSat 6B(115.5E) CCTV2 </description>
             <frequency>3840</frequency>
             <symbolrate>27500</symbolrate>
             <polarization>0</polarization> <!-- Polarisation_Horizontal, Polarisation_Vertical, Polarisation_CircularLeft, Polarisation_CircularRight -->
@@ -16,7 +16,7 @@
             <pilot>2</pilot> <!-- Pilot_Off, Pilot_On, Pilot_Unknown -->
             <band>c</band>
             <khz>1</khz>
-            <service>1:0:1:12D:3:888:C90000:0:0:0</service>
+            <service>1:0:1:12e:3:888:C90000:0:0:0:</service>
         </transponder>
     
         <transponder>
@@ -34,7 +34,7 @@
             <pilot>2</pilot> <!-- Pilot_Off, Pilot_On, Pilot_Unknown -->
             <band>c</band>
             <khz>0</khz>
-            <service>1:0:1:2:1:FFFF:C98F6F:0:0:0</service>
+            <service>1:0:1:2:1:FFFF:C98F6F:0:0:0:</service>
         </transponder>
         <transponder>
             <location>korea</location>
