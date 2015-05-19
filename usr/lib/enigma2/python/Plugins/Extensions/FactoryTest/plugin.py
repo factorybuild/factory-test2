@@ -52,7 +52,7 @@ lnb_choices = {'universal_lnb': _('Universal LNB'),
  'unicable': _('Unicable'),
  'c_band': _('C-Band'),
  'user_defined': _('User defined')}
-models = ['g300', 'et10000', 'et8000', 'et9x00', 'et7500', 'et7000', 'et8500']
+models = ['g300', 'et10000', 'et8000', 'et9x00', 'et7500', 'et7000', 'et8500', '7100S']
 JIG_VERSION = '1.0'
 
 class cFactoryTestPlugin(Screen):
@@ -83,7 +83,7 @@ class cFactoryTestPlugin(Screen):
             else:
                 os._exit(1)
         if os.path.exists('/proc/stb/info/board_revision'):
-            if self.boxtype == 'et9x00' or self.boxtype == 'et7500' or self.boxtype == 'et7000' or self.boxtype == 'et8500' or self.boxtype == 'g300':
+            if self.boxtype == 'et9x00' or self.boxtype == 'et7500' or self.boxtype == 'et7000' or self.boxtype == 'et8500' or self.boxtype == 'g300' or self.boxtype == '7100S':
                 self.hardwareversion = self.readFile('/proc/stb/info/board_revision')
             else:
                 self.hardwareversion = '0.' + self.readFile('/proc/stb/info/board_revision')
@@ -232,6 +232,32 @@ class cFactoryTestPlugin(Screen):
              'ok': -1}
             self.has_esata = True
             self.has_security = False
+        elif self.boxtype == '7100S':
+            self.tuners = [['Unknown', 'Unknown'], ['Unknown', 'Unknown']]
+            self.usbslot_names = ['Front', 'Rear']
+            self.usbslot_target = ['1-2', '1-1']
+            self.menu_names = ['Tuner 1',
+             'Tuner 2',            
+             'Front Panel Test',
+             'Front LED Test',             
+             'Factory Default']
+            self.menu_tuner_index = range(0, 2)
+            self.button_count = 5
+            self.buttons = {'menu': -1,
+             'cancel': -1,
+             'power': 0,
+             'volup': 3,
+             'voldown': 4,
+             'channelup': 1,
+             'channeldown': 2,             
+             'left': -1,
+             'right': -1,
+             'up': -1,
+             'down': -1,
+             'ok': -1}
+            self.has_sata = False             
+            self.has_esata = False
+            self.has_security = False            
         elif self.boxtype == 'et7500':
             self.tuners = [['Unknown', 'Unknown'], ['Unknown', 'Unknown']]
             self.usbslot_names = ['Front', 'Rear']
@@ -389,6 +415,7 @@ class cFactoryTestPlugin(Screen):
          'GlobalActions',
          'ColorActions',
          'OkCancelActions',
+         'MoviePlayerActions',
          'MovieSelectionActions'], {'ok': self.keyOk,
          'cancel': self.keyCancel,
          'contextMenu': self.keyMenu,
@@ -402,7 +429,9 @@ class cFactoryTestPlugin(Screen):
          'yellow': self.keyYellow,
          'blue': self.keyBlue,
          'volumeUp': self.keyVolumeUp,
-         'volumeDown': self.keyVolumeDown}, -1)
+         'volumeDown': self.keyVolumeDown, 
+         'channelUp': self.keyChannelUp,
+         'channelDown': self.keyChannelDown}, -1)
         self['numactions'] = NumberActionMap(['NumberActions'], {'1': self.keyNumberGlobal,
          '2': self.keyNumberGlobal,
          '3': self.keyNumberGlobal,
@@ -814,7 +843,14 @@ class cFactoryTestPlugin(Screen):
                 self.scislot[slot] = True
                 self.setRightMenuSmartcard(slot, True)
             p.close()
-
+        elif self.boxtype == '7100S':
+            p = os.popen('/usr/lib/enigma2/python/Plugins/Extensions/FactoryTest/sctest /dev/sci%d' % slot)
+            ret = p.read()
+            if ret.strip() == '1':
+                self.scislot[slot] = True
+                self.setRightMenuSmartcard(slot, True)
+            p.close()
+            
     def runUsbTest(self, slot):
         ret = self.readlog(slot)
         if ret != '':
@@ -1267,6 +1303,10 @@ class cFactoryTestPlugin(Screen):
                 f = open("/proc/stb/lcd/symbol_all", "w")
                 f.write("1")
                 f.close()
+            if fileExists("/proc/stb/lcd/powerled"):
+                f = open("/proc/stb/lcd/powerled", "w")
+                f.write("1")
+                f.close()
             self.showMessage()
             self['message'].setText('Front Display Test running\n\nWhile testing, the screen is off\nAfter screen off, press OK or Directrion key (UP/DOWN) to test stop, then the screen is on\n\nPress OK to continue test\nPress Direction Key(UP/DOWN) to stop')
             self.type_test = self.TEST_FRONT_LED
@@ -1280,6 +1320,10 @@ class cFactoryTestPlugin(Screen):
         else:
             if fileExists("/proc/stb/lcd/symbol_all"):
                 f = open("/proc/stb/lcd/symbol_all", "w")
+                f.write("0")
+                f.close()
+            if fileExists("/proc/stb/lcd/powerled"):
+                f = open("/proc/stb/lcd/powerled", "w")
                 f.write("0")
                 f.close()
             self.hideMessage()
@@ -1879,6 +1923,9 @@ class cFactoryTestPlugin(Screen):
         elif self.boxtype == 'et8500':
             if number != 0:
                 self.leftmenu_idx = number - 1
+        elif self.boxtype == '7100S':
+            if number != 0:
+                self.leftmenu_idx = number - 1
         else:
             return
         self.setMenuItem(self.leftmenu_idx)
@@ -1923,6 +1970,9 @@ class cFactoryTestPlugin(Screen):
             elif self.boxtype == 'et8500':
                 self.runKeyTestStart = False
                 self.runKeyTest(0)
+            elif self.boxtype == '7100S':
+                self.runKeyTestStart = False
+                self.runKeyTest(0)                
             return
         tuner_count = len(self.menu_tuner_index)
         if self.boxtype == 'et10000':
@@ -2015,7 +2065,17 @@ class cFactoryTestPlugin(Screen):
                 self.runAgingTest(1)
             elif self.leftmenu_idx == tuner_count + 2:
                 self.runRemovePlugin()
-
+        elif self.boxtype == '7100S':
+            if self.leftmenu_idx in self.menu_tuner_index:
+                self.runTunerTest(1)
+            elif self.leftmenu_idx == tuner_count:
+                self.runKeyTest(1)
+                self.runKeyTestStart = True
+            elif self.leftmenu_idx == tuner_count + 1:
+                self.runFrontLEDTest(1)
+            elif self.leftmenu_idx == tuner_count + 2:
+                self.runRemovePlugin()
+                
     def keyUp(self):
         if self.want_ok is True:
             if self.type_test == self.TEST_TUNER:
@@ -2092,6 +2152,20 @@ class cFactoryTestPlugin(Screen):
             self.setButton(self.buttons['volup'])
             return
 
+    def keyChannelDown(self):
+        if self.want_ok is True:
+            return
+        if self.TEST_KEYS is True:
+            self.setButton(self.buttons['channeldown'])
+            return
+
+    def keyChannelUp(self):
+        if self.want_ok is True:
+            return
+        if self.TEST_KEYS is True:
+            self.setButton(self.buttons['channelup'])
+            return
+            
     def keyPower(self):
         if self.want_ok is True:
             return
