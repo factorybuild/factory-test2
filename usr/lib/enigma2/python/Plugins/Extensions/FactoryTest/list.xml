@@ -2,7 +2,79 @@
 <xml>
     <satellite>
         <transponder>
-            <location>china</location>
+            <location>china115</location>
+            <description>ChinaSat 6B(115.5E) CCTV2 </description>
+            <frequency>3840</frequency>
+            <symbolrate>27500</symbolrate>
+            <polarization>0</polarization> <!-- Polarisation_Horizontal, Polarisation_Vertical, Polarisation_CircularLeft, Polarisation_CircularRight -->
+            <fec>0</fec> <!-- FEC_Auto=0, FEC_1_2=1, FEC_2_3=2, FEC_3_4=3, FEC_5_6=4, FEC_7_8=5, FEC_8_9=6, FEC_3_5=7, FEC_4_5=8, FEC_9_10=9, FEC_6_7=10, FEC_None=15 -->
+            <inversion>2</inversion> <!-- Inversion_Off, Inversion_On, Inversion_Unknown -->
+            <satpos>1156</satpos>
+            <system>0</system> <!-- System_DVB_S, System_DVB_S2 -->
+            <modulation>1</modulation> <!-- Modulation_Auto, Modulation_QPSK, Modulation_8PSK, Modulation_QAM16 -->
+            <rolloff>0</rolloff> <!-- RollOff_alpha_0_35, RollOff_alpha_0_25, RollOff_alpha_0_20, RollOff_auto -->
+            <pilot>2</pilot> <!-- Pilot_Off, Pilot_On, Pilot_Unknown -->
+            <band>c</band>
+            <khz>1</khz>
+            <service>1:0:1:12E:3:888:C90000:0:0:0</service>
+        </transponder>
+    
+        <transponder>
+            <location>china115</location>
+            <description>ChinaSat 6B(115.5E) BTV KAKU</description>
+            <frequency>3951</frequency>
+            <symbolrate>9520</symbolrate>
+            <polarization>1</polarization> <!-- Polarisation_Horizontal, Polarisation_Vertical, Polarisation_CircularLeft, Polarisation_CircularRight -->
+            <fec>0</fec> <!-- FEC_Auto=0, FEC_1_2=1, FEC_2_3=2, FEC_3_4=3, FEC_5_6=4, FEC_7_8=5, FEC_8_9=6, FEC_3_5=7, FEC_4_5=8, FEC_9_10=9, FEC_6_7=10, FEC_None=15 -->
+            <inversion>2</inversion> <!-- Inversion_Off, Inversion_On, Inversion_Unknown -->
+            <satpos>1156</satpos>
+            <system>0</system> <!-- System_DVB_S, System_DVB_S2 -->
+            <modulation>1</modulation> <!-- Modulation_Auto, Modulation_QPSK, Modulation_8PSK, Modulation_QAM16 -->
+            <rolloff>0</rolloff> <!-- RollOff_alpha_0_35, RollOff_alpha_0_25, RollOff_alpha_0_20, RollOff_auto -->
+            <pilot>2</pilot> <!-- Pilot_Off, Pilot_On, Pilot_Unknown -->
+            <band>c</band>
+            <khz>0</khz>
+            <service>1:0:1:2:1:FFFF:C98F6F:0:0:0</service>
+        </transponder>
+
+        <transponder>
+            <location>korea100</location>
+            <description>AsiaSat 5(100.5E) SatLink(France 24)</description>
+            <frequency>4000</frequency>
+            <symbolrate>28125</symbolrate>
+            <polarization>0</polarization> <!-- Polarisation_Horizontal, Polarisation_Vertical, Polarisation_CircularLeft, Polarisation_CircularRight -->
+            <fec>0</fec> <!-- FEC_Auto=0, FEC_1_2=1, FEC_2_3=2, FEC_3_4=3, FEC_5_6=4, FEC_7_8=5, FEC_8_9=6, FEC_3_5=7, FEC_4_5=8, FEC_9_10=9, FEC_6_7=10, FEC_None=15 -->
+            <inversion>2</inversion> <!-- Inversion_Off, Inversion_On, Inversion_Unknown -->
+            <satpos>1006</satpos>
+            <system>0</system> <!-- System_DVB_S, System_DVB_S2 -->
+            <modulation>1</modulation> <!-- Modulation_Auto, Modulation_QPSK, Modulation_8PSK, Modulation_QAM16 -->
+            <rolloff>0</rolloff> <!-- RollOff_alpha_0_35, RollOff_alpha_0_25, RollOff_alpha_0_20, RollOff_auto -->
+            <pilot>2</pilot> <!-- Pilot_Off, Pilot_On, Pilot_Unknown -->
+            <band>c</band> 
+            <khz>1</khz>
+            <service>1:0:1:8:1:FFFF:3EE0FA0:0:0:0</service>
+        </transponder>
+    
+        <transponder>
+            <location>korea100</location>
+            <description>AsiaSat 5(100.5E) Iris(Dubai TV)</description>
+            <frequency>3660</frequency>
+            <symbolrate>27500</symbolrate>
+            <polarization>1</polarization> <!-- Polarisation_Horizontal, Polarisation_Vertical, Polarisation_CircularLeft, Polarisation_CircularRight -->
+            <fec>0</fec> <!-- FEC_Auto=0, FEC_1_2=1, FEC_2_3=2, FEC_3_4=3, FEC_5_6=4, FEC_7_8=5, FEC_8_9=6, FEC_3_5=7, FEC_4_5=8, FEC_9_10=9, FEC_6_7=10, FEC_None=15 -->
+            <inversion>2</inversion> <!-- Inversion_Off, Inversion_On, Inversion_Unknown -->
+            <satpos>1006</satpos>
+            <system>0</system> <!-- System_DVB_S, System_DVB_S2 -->
+            <modulation>1</modulation> <!-- Modulation_Auto, Modulation_QPSK, Modulation_8PSK, Modulation_QAM16 -->
+            <rolloff>0</rolloff> <!-- RollOff_alpha_0_35, RollOff_alpha_0_25, RollOff_alpha_0_20, RollOff_auto -->
+            <pilot>2</pilot> <!-- Pilot_Off, Pilot_On, Pilot_Unknown -->
+            <band>c</band>
+            <khz>0</khz>
+            <service>1:0:1:1:1:FFFF:3EE8E4C:0:0:0</service>
+        </transponder>
+
+        <transponder>
+            <location>china105</location>
             <description>AsiaSat 7(105.5E) CNAI PAL</description>
             <frequency>3706</frequency>
             <symbolrate>6000</symbolrate>
@@ -20,7 +92,7 @@
         </transponder>
     
         <transponder>
-            <location>china</location>
+            <location>china105</location>
             <description>AsiaSat 7(105.5E) Sahara ONE</description>
             <frequency>4020</frequency>
             <symbolrate>27250</symbolrate>
@@ -33,11 +105,12 @@
             <rolloff>0</rolloff> <!-- RollOff_alpha_0_35, RollOff_alpha_0_25, RollOff_alpha_0_20, RollOff_auto -->
             <pilot>2</pilot> <!-- Pilot_Off, Pilot_On, Pilot_Unknown -->
             <band>c</band>
-            <khz>0</khz>            		 
+            <khz>0</khz>
             <service>1:0:1:1:FFFF:1:4208FB4:0:0:0</service>
         </transponder>
+
         <transponder>
-            <location>korea</location>
+            <location>korea105</location>
             <description>AsiaSat 7(105.5E) DW (Asien)</description>
             <frequency>3760</frequency>
             <symbolrate>26000</symbolrate>
@@ -55,7 +128,7 @@
         </transponder>
     
         <transponder>
-            <location>korea</location>
+            <location>korea105</location>
             <description>AsiaSat 7(105.5E) Fashion TV SD</description>
             <frequency>3745</frequency>
             <symbolrate>2626</symbolrate>
