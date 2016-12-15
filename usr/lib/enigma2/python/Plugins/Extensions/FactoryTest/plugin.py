@@ -52,7 +52,7 @@ lnb_choices = {'universal_lnb': _('Universal LNB'),
  'unicable': _('Unicable'),
  'c_band': _('C-Band'),
  'user_defined': _('User defined')}
-models = ['g300', 'et10000', 'et8000', 'et9x00', 'et7500', 'et7000', 'et8500', '7000S', '7100S', '7200S', '7300S', '7400S']
+models = ['bre2ze_t2c','g300', 'et10000', 'et8000', 'et9x00', 'et7500', 'et7000', 'et8500', '7000S', '7100S', '7200S', '7300S', '7400S']
 JIG_VERSION = '1.0'
 
 class cFactoryTestPlugin(Screen):
@@ -83,7 +83,7 @@ class cFactoryTestPlugin(Screen):
             else:
                 os._exit(1)
         if os.path.exists('/proc/stb/info/board_revision'):
-            if self.boxtype == 'et9x00' or self.boxtype == 'et7500' or self.boxtype == 'et7000' or self.boxtype == 'et8500' or self.boxtype == 'g300' or self.boxtype == '7000S' or self.boxtype == '7100S' or self.boxtype == '7200S' or self.boxtype == '7300S' or self.boxtype == '7400S':
+            if self.boxtype == 'et9x00' or self.boxtype == 'et7500' or self.boxtype == 'et7000' or self.boxtype == 'et8500' or self.boxtype == 'g300' or self.boxtype == '7000S' or self.boxtype == '7100S' or self.boxtype == '7200S' or self.boxtype == '7300S' or self.boxtype == '7400S' or self.boxtype == 'bre2ze_t2c':
                 self.hardwareversion = self.readFile('/proc/stb/info/board_revision')
             else:
                 self.hardwareversion = '0.' + self.readFile('/proc/stb/info/board_revision')
@@ -132,7 +132,7 @@ class cFactoryTestPlugin(Screen):
              'ok': 3}
             self.has_esata = True
             self.has_security = True
-        elif self.boxtype == 'g300':
+        elif self.boxtype == 'g300' or self.boxtype == 'bre2ze_t2c':
             self.tuners = [['Unknown', 'Unknown'], ['Unknown', 'Unknown'], ['Unknown', 'Unknown']]
             self.usbslot_names = ['Back Low', 'Back High', 'Front']
             self.usbslot_target = ['1-', '2-', '3-']
@@ -461,7 +461,7 @@ class cFactoryTestPlugin(Screen):
         self.skin += '\n'
         self.skin += '\n\t<widget name="stbname" position="70,470" size="266,40" halign="left" valign="center" font="Regular;22" zPosition="10" backgroundColor="#848484" foregroundColor="#000000" />'
         self.skin += '\n'
-        if self.boxtype == 'et8000' or self.boxtype == 'et10000' or self.boxtype == 'et8500' or self.boxtype == 'g300':
+        if self.boxtype == 'et8000' or self.boxtype == 'et10000' or self.boxtype == 'et8500' or self.boxtype == 'g300' or self.boxtype == 'bre2ze_t2c':
             self.skin += '\n\t<widget name="faninfo" position="70,510" size="266,60" halign="left" valign="center" font="Regular;20" zPosition="10" backgroundColor="#848484" foregroundColor="#000000" />'
             self.skin += '\n\t<widget name="tunerinfo" position="70,570" size="266,40" halign="left" valign="center" font="Regular;22" zPosition="10" backgroundColor="#848484" foregroundColor="#000000" />'
         else:
@@ -912,7 +912,7 @@ class cFactoryTestPlugin(Screen):
                             self.setRightMenuSmartcard(slot, True)
 
             self.dll.closesci(self.fd)
-        elif self.boxtype == 'et9x00' or self.boxtype == 'et7000' or self.boxtype == 'et7500' or self.boxtype == 'et8500' or self.boxtype == 'g300':
+        elif self.boxtype == 'et9x00' or self.boxtype == 'et7000' or self.boxtype == 'et7500' or self.boxtype == 'et8500' or self.boxtype == 'g300' or self.boxtype == 'bre2ze_t2c':
             p = os.popen('/usr/lib/enigma2/python/Plugins/Extensions/FactoryTest/sctest /dev/sci%d' % slot)
             ret = p.read()
             if ret.strip() == '1':
@@ -948,7 +948,7 @@ class cFactoryTestPlugin(Screen):
         ret = self.readEsatalog()
         if ret != '':
             for x in ret:
-                if self.boxtype == 'g300':
+                if self.boxtype == 'g300' or self.boxtype == 'bre2ze_t2c':
                     if 'ata2: SATA link up' in x:
                         self.setRightMenuEsata(True)
                         break
@@ -962,7 +962,7 @@ class cFactoryTestPlugin(Screen):
                     if 'SATA link down' in x:
                         self.setRightMenuEsata(False)
                         break
-                if self.boxtype == 'g300':
+                if self.boxtype == 'g300' or self.boxtype == 'bre2ze_t2c':
                     if 'ata1: SATA link up' in x:
                         self.setRightMenusata(True)
                         break
@@ -1997,7 +1997,7 @@ class cFactoryTestPlugin(Screen):
                 self.leftmenu_idx = 9
             else:
                 self.leftmenu_idx = number - 1
-        elif self.boxtype == 'g300':
+        elif self.boxtype == 'g300' or self.boxtype == 'bre2ze_t2c':
             if number != 0:
                 self.leftmenu_idx = number - 1
         elif self.boxtype == 'et8000':
@@ -2045,7 +2045,7 @@ class cFactoryTestPlugin(Screen):
                     self.runFrontLEDTest(0)
             return
         if self.TEST_KEYS is True:
-            if self.boxtype == 'et8000' or self.boxtype == 'et10000' or self.boxtype == 'g300':
+            if self.boxtype == 'et8000' or self.boxtype == 'et10000' or self.boxtype == 'g300' or self.boxtype == 'bre2ze_t2c':
                 self.setButton(self.buttons['ok'])
                 if self.runKeyTestStart == False:
                     self.runKeyTest(0)
@@ -2101,7 +2101,7 @@ class cFactoryTestPlugin(Screen):
                 self.runAgingTest(1)
             elif self.leftmenu_idx == tuner_count + 5:
                 self.runRemovePlugin()
-        elif self.boxtype == 'g300':
+        elif self.boxtype == 'g300' or self.boxtype == 'bre2ze_t2c':
             if self.leftmenu_idx in self.menu_tuner_index:
                 self.runTunerTest(1)
             elif self.leftmenu_idx == tuner_count:
